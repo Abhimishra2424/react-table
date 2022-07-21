@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export const COLUMNS = [
   {
     Header: "ID",
@@ -18,6 +20,7 @@ export const COLUMNS = [
     Header: "Date of Birth",
     footer: "Date of Birth",
     accessor: "date_of_birth",
+    Cell: (props) => <span>{format(new Date(props.value), "dd/MM/yyyy")}</span>,
   },
   {
     Header: "Country",

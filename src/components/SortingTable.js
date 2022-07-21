@@ -24,7 +24,7 @@ export const SortingTable = () => {
   );
 
   return (
-    <table {...getTableProps()}>
+    <table {...getTableProps()} id="customers">
       <thead>
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
