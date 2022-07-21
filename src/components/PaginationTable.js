@@ -27,7 +27,7 @@ export const PaginationTable = () => {
     usePagination
   );
 
-  const { pageIndex, pageSize } = state;
+  const { pageIndex } = state;
 
   return (
     <>
