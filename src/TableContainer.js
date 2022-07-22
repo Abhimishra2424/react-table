@@ -1,18 +1,25 @@
 import React, { Fragment } from "react";
-import { useTable, useSortBy, useFilters, usePagination, useBlockLayout } from "react-table";
-import { Table, Button, Input, Grid, Select } from 'semantic-ui-react'
+import {
+  useTable,
+  useSortBy,
+  useFilters,
+  usePagination,
+  useBlockLayout,
+} from "react-table";
+import { Table, Button, Grid } from "semantic-ui-react";
 import { Filter, DefaultColumnFilter } from "./filters";
-import { FixedSizeList } from 'react-window'
-import scrollbarWidth from './scrollbarWidth';
-import { Pagination } from "reactstrap";
+import { FixedSizeList } from "react-window";
+import scrollbarWidth from "./scrollbarWidth";
 
 const TableContainer = ({ columns, data }) => {
-  const scrollBarSize = React.useMemo(() => scrollbarWidth(), [])
+  const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
   const {
-    getTableProps, getTableBodyProps, headerGroups,
-    page, // rows, -> we change 'rows' to 'page'
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
     rows,
     prepareRow,
+    // page,
     // below new props related to 'usePagination' hook
     canPreviousPage,
     canNextPage,
@@ -22,66 +29,71 @@ const TableContainer = ({ columns, data }) => {
     nextPage,
     previousPage,
     totalColumnsWidth,
-    setPageSize,
+    // setPageSize,
     footerGroups,
-    state: { pageIndex, pageSize },
+
+    state: { pageIndex },
   } = useTable(
     {
-      columns, data,
+      columns,
+      data,
       defaultColumn: { Filter: DefaultColumnFilter },
-      initialState: { pageIndex: 0, pageSize: 10 }
+      initialState: { pageIndex: 0, pageSize: 20 },
     },
-    useFilters, useSortBy, usePagination, useBlockLayout
+    useFilters,
+    useSortBy,
+    usePagination,
+    useBlockLayout
   );
 
   const generateSortingIndicator = (column) => {
     return column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : "";
   };
 
-  // const onChangeInSelect = (event) => {
-  //   setPageSize(Number(event.target.value));
-  // };
-
-  // const onChangeInInput = (event) => {
-  //   const page = event.target.value ? Number(event.target.value) - 1 : 0;
-  //   gotoPage(page);
-  // };
-
-  console.log("totalColumnsWidth ==========>", totalColumnsWidth)
-
   const RenderRow = React.useCallback(
     ({ index, style }) => {
-      const row = rows[index]
-      prepareRow(row)
+      const row = rows[index];
+      prepareRow(row);
       return (
         <tr
           {...row.getRowProps({
-            style,
+            style: {
+              ...style,
+              minHeight: "initial",
+              width: totalColumnsWidth,
+            },
           })}
-          className="tr"
         >
-          {row.cells.map(cell => {
-            return (
-              <td {...cell.getCellProps()} className="td">
-                {cell.render('Cell')}
-              </td>
-            )
+          {row.cells.map((cell) => {
+            return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
           })}
         </tr>
-      )
+      );
     },
-    [prepareRow, rows]
-  )
-
+    [prepareRow, rows, totalColumnsWidth]
+  );
 
   return (
     <>
-      <Table  {...getTableProps()}>
+      <Table
+        {...getTableProps()}
+        className="table red"
+        size="large"
+        style={{ border: "solid 2px blue" }}
+      >
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>
+                <th
+                  {...column.getHeaderProps()}
+                  style={{
+                    borderBottom: "solid 3px red",
+                    background: "aliceblue",
+                    color: "black",
+                    fontWeight: "bold",
+                  }}
+                >
                   <div {...column.getSortByToggleProps()}>
                     {column.render("Header")}
                     {generateSortingIndicator(column)}
@@ -93,46 +105,31 @@ const TableContainer = ({ columns, data }) => {
           ))}
         </thead>
 
-        {/* <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody> */}
-
         <div {...getTableBodyProps()}>
           <FixedSizeList
-            height={500}
+            height={450}
             itemCount={rows.length}
-            itemSize={40}
-            width={totalColumnsWidth + scrollBarSize}
+            scrollToItem={pageIndex}
+            itemSize={50}
+            // width={totalColumnsWidth + scrollBarSize}
           >
             {RenderRow}
           </FixedSizeList>
         </div>
 
         <tfoot>
-          {footerGroups.map(group => (
+          {footerGroups.map((group) => (
             <tr {...group.getFooterGroupProps()}>
-              {group.headers.map(column => (
-                <td {...column.getFooterProps()}>{column.render('Footer')}</td>
+              {group.headers.map((column) => (
+                <td {...column.getFooterProps()}>{column.render("Footer")}</td>
               ))}
             </tr>
           ))}
         </tfoot>
-
       </Table>
 
       <Fragment>
-        <Grid columns={6} stackable>
+        <Grid columns={6}>
           <Grid.Row>
             <Grid.Column>
               <Button
@@ -157,7 +154,11 @@ const TableContainer = ({ columns, data }) => {
               </strong>
             </Grid.Column>
             <Grid.Column>
-              <Button color="primary" onClick={nextPage} disabled={!canNextPage}>
+              <Button
+                color="primary"
+                onClick={nextPage}
+                disabled={!canNextPage}
+              >
                 {">"}
               </Button>
               <Button
