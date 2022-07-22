@@ -1,12 +1,17 @@
 import React, { Fragment } from "react";
-import { useTable, useSortBy, useFilters, usePagination } from "react-table";
-import { Table, Row, Col, Button, Input } from "reactstrap";
+import { useTable, useSortBy, useFilters, usePagination, useBlockLayout } from "react-table";
+import { Table, Button, Input, Grid, Select } from 'semantic-ui-react'
 import { Filter, DefaultColumnFilter } from "./filters";
+import { FixedSizeList } from 'react-window'
+import scrollbarWidth from './scrollbarWidth';
+import { Pagination } from "reactstrap";
 
 const TableContainer = ({ columns, data }) => {
+  const scrollBarSize = React.useMemo(() => scrollbarWidth(), [])
   const {
     getTableProps, getTableBodyProps, headerGroups,
     page, // rows, -> we change 'rows' to 'page'
+    rows,
     prepareRow,
     // below new props related to 'usePagination' hook
     canPreviousPage,
@@ -16,7 +21,9 @@ const TableContainer = ({ columns, data }) => {
     gotoPage,
     nextPage,
     previousPage,
+    totalColumnsWidth,
     setPageSize,
+    footerGroups,
     state: { pageIndex, pageSize },
   } = useTable(
     {
@@ -24,26 +31,52 @@ const TableContainer = ({ columns, data }) => {
       defaultColumn: { Filter: DefaultColumnFilter },
       initialState: { pageIndex: 0, pageSize: 10 }
     },
-    useFilters, useSortBy, usePagination
+    useFilters, useSortBy, usePagination, useBlockLayout
   );
 
   const generateSortingIndicator = (column) => {
     return column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : "";
   };
 
-  const onChangeInSelect = (event) => {
-    setPageSize(Number(event.target.value));
-  };
+  // const onChangeInSelect = (event) => {
+  //   setPageSize(Number(event.target.value));
+  // };
 
-  const onChangeInInput = (event) => {
-    const page = event.target.value ? Number(event.target.value) - 1 : 0;
-    gotoPage(page);
-  };
+  // const onChangeInInput = (event) => {
+  //   const page = event.target.value ? Number(event.target.value) - 1 : 0;
+  //   gotoPage(page);
+  // };
+
+  console.log("totalColumnsWidth ==========>", totalColumnsWidth)
+
+  const RenderRow = React.useCallback(
+    ({ index, style }) => {
+      const row = rows[index]
+      prepareRow(row)
+      return (
+        <tr
+          {...row.getRowProps({
+            style,
+          })}
+          className="tr"
+        >
+          {row.cells.map(cell => {
+            return (
+              <td {...cell.getCellProps()} className="td">
+                {cell.render('Cell')}
+              </td>
+            )
+          })}
+        </tr>
+      )
+    },
+    [prepareRow, rows]
+  )
+
 
   return (
     <>
-      {" "}
-      <Table bordered hover {...getTableProps()}>
+      <Table  {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -60,7 +93,7 @@ const TableContainer = ({ columns, data }) => {
           ))}
         </thead>
 
-        <tbody {...getTableBodyProps()}>
+        {/* <tbody {...getTableBodyProps()}>
           {page.map((row) => {
             prepareRow(row);
             return (
@@ -73,64 +106,70 @@ const TableContainer = ({ columns, data }) => {
               </tr>
             );
           })}
-        </tbody>
-      </Table>
-      <Fragment>
-        <Row style={{ maxWidth: 1000, margin: "0 auto", textAlign: "center" }}>
-          <Col md={3}>
-            <Button
-              color="primary"
-              onClick={() => gotoPage(0)}
-              disabled={!canPreviousPage}
-            >
-              {"<<"}
-            </Button>
-            <Button
-              color="primary"
-              onClick={previousPage}
-              disabled={!canPreviousPage}
-            >
-              {"<"}
-            </Button>
-          </Col>
-          <Col md={2} style={{ marginTop: 7 }}>
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>
-          </Col>
-          <Col md={2}>
-            <Input
-              type="number"
-              min={1}
-              style={{ width: 70 }}
-              max={pageOptions.length}
-              defaultValue={pageIndex + 1}
-              onChange={onChangeInInput}
-            />
-          </Col>
-          <Col md={2}>
-            <Input type="select" value={pageSize} onChange={onChangeInSelect}>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
+        </tbody> */}
+
+        <div {...getTableBodyProps()}>
+          <FixedSizeList
+            height={500}
+            itemCount={rows.length}
+            itemSize={40}
+            width={totalColumnsWidth + scrollBarSize}
+          >
+            {RenderRow}
+          </FixedSizeList>
+        </div>
+
+        <tfoot>
+          {footerGroups.map(group => (
+            <tr {...group.getFooterGroupProps()}>
+              {group.headers.map(column => (
+                <td {...column.getFooterProps()}>{column.render('Footer')}</td>
               ))}
-            </Input>
-          </Col>
-          <Col md={3}>
-            <Button color="primary" onClick={nextPage} disabled={!canNextPage}>
-              {">"}
-            </Button>
-            <Button
-              color="primary"
-              onClick={() => gotoPage(pageCount - 1)}
-              disabled={!canNextPage}
-            >
-              {">>"}
-            </Button>
-          </Col>
-        </Row>
+            </tr>
+          ))}
+        </tfoot>
+
+      </Table>
+
+      <Fragment>
+        <Grid columns={6} stackable>
+          <Grid.Row>
+            <Grid.Column>
+              <Button
+                color="primary"
+                onClick={() => gotoPage(0)}
+                disabled={!canPreviousPage}
+              >
+                {"<<"}
+              </Button>
+              <Button
+                color="primary"
+                onClick={previousPage}
+                disabled={!canPreviousPage}
+              >
+                {"<"}
+              </Button>
+            </Grid.Column>
+            <Grid.Column>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>
+            </Grid.Column>
+            <Grid.Column>
+              <Button color="primary" onClick={nextPage} disabled={!canNextPage}>
+                {">"}
+              </Button>
+              <Button
+                color="primary"
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                {">>"}
+              </Button>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </Fragment>
     </>
   );
