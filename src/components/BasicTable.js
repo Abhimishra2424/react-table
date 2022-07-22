@@ -1,28 +1,14 @@
 import React, { useMemo } from "react";
 import { useTable, useSortBy } from "react-table";
 import MOCK_DATA from "../MOCK_DATA.json";
-import { COLUMNS, GROUPS_COLUMNS } from "./columns";
+import { COLUMNS } from "./columns";
 
 export const BasicTable = () => {
   const columns = useMemo(() => COLUMNS, []);
-  //   const grocolumns = useMemo(() => GROUPS_COLUMNS, []);
   const data = useMemo(() => MOCK_DATA, []);
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    footerGroups,
-  } = useTable(
-    {
-      columns,
-      data,
-    },
-    useSortBy
-  );
-
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, footerGroups } = useTable({ columns, data, }, useSortBy);
+  
   return (
     <table {...getTableProps()}>
       <thead>
