@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
+import ColumnGroupingTable from "./components/ColumnGroupingTable";
 import V8table from "./components/V8-table";
 // import { Container } from "semantic-ui-react";
 // import { BasicTable } from "./components/BasicTable";
 // import { SortingTable } from "./components/SortingTable";
 // import { FilteringTable } from "./components/filteringTable";
 // import { PaginationTable } from "./components/PaginationTable";
-import TableContainer from "./TableContainer";
+// import TableContainer from "./TableContainer";
 // import { SelectColumnFilter } from "./filters";
 // import { Button } from "@mui/material";
 
@@ -75,7 +76,7 @@ function App() {
   //       width: 100,
   //       disableSortBy: true,
   //       disableFilters: true,
-  //       
+  //
   //   ],
   //   []
   // );
@@ -105,7 +106,10 @@ function App() {
     // >
     //   <TableContainer columns={columns} data={data} />
     // </Container>
-    <V8table />
+    <>
+      {/* <V8table /> */}
+      <ColumnGroupingTable />
+    </>
   );
 }
 
