@@ -3,10 +3,13 @@ import {
   createTable,
   getCoreRowModel,
   useTableInstance,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 import Student from "../STUDENT_MOCK.json";
 import download from "downloadjs";
 import { format } from "date-fns";
+import { Table, Grid } from "semantic-ui-react";
+import { Button } from "@mui/material";
 
 const table = createTable();
 
@@ -101,7 +104,6 @@ const defaultColumns = [
   }),
 ];
 
-
 const ColumnGroupingTable = () => {
   const [data, setData] = useState([...defaultData]);
   const [columns, setColumns] = useState([...defaultColumns]);
@@ -110,11 +112,12 @@ const ColumnGroupingTable = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
     <div>
-      <table border={1}>
+      <Table className="ui called red">
         <thead>
           {tableInstance.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -127,7 +130,17 @@ const ColumnGroupingTable = () => {
           ))}
         </thead>
 
-        <tbody>
+        <tbody
+          style={{
+            overflow: "auto",
+            maxHeight: "500px",
+            width: "100%",
+            border: "1px solid #ccc",
+            borderCollapse: "collapse",
+            backgroundColor: "#fff",
+            margin: "0",
+          }}
+        >
           {tableInstance.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
@@ -137,7 +150,7 @@ const ColumnGroupingTable = () => {
           ))}
         </tbody>
 
-        <tfoot>
+        {/* <tfoot>
           {tableInstance.getFooterGroups().map((footerGroup) => (
             <tr key={footerGroup.id}>
               {footerGroup.headers.map((footer) => (
@@ -147,8 +160,81 @@ const ColumnGroupingTable = () => {
               ))}
             </tr>
           ))}
-        </tfoot>
-      </table>
+        </tfoot> */}
+      </Table>
+
+      {/* create pagination */}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "20px",
+        }}
+      >
+        <Button
+        variant="contained"
+          onClick={() => tableInstance.setPageIndex(0)}
+          disabled={!tableInstance.getCanPreviousPage()}
+        >
+          {"<<"}
+        </Button>
+        <Button
+        variant="contained"
+          onClick={() => tableInstance.previousPage()}
+          disabled={!tableInstance.getCanPreviousPage()}
+        >
+          {"<"}
+        </Button>
+        <Button
+        variant="contained"
+          onClick={() => tableInstance.nextPage()}
+          disabled={!tableInstance.getCanNextPage()}
+        >
+          {">"}
+        </Button>
+        <Button
+        variant="contained"
+          onClick={() =>
+            tableInstance.setPageIndex(tableInstance.getPageCount() - 1)
+          }
+          disabled={!tableInstance.getCanNextPage()}
+        >
+          {">>"}
+        </Button>
+        <span>
+          <div>Page</div>
+          <strong>
+            {tableInstance.getState().pagination.pageIndex + 1} of{" "}
+            {tableInstance.getPageCount()}
+          </strong>
+        </span>
+        <span>
+          | Go to page:
+          <input
+            type="number"
+            defaultValue={tableInstance.getState().pagination.pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              tableInstance.setPageIndex(page);
+            }}
+          />
+        </span>
+        <select
+          value={tableInstance.getState().pagination.pageSize}
+          onChange={(e) => {
+            tableInstance.setPageSize(Number(e.target.value));
+          }}
+        >
+          {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>{tableInstance.getRowModel().rows.length} Rows</div>
     </div>
   );
 };
