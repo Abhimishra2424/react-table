@@ -6,10 +6,11 @@ import {
 } from "@tanstack/react-table";
 import Student from "../student.json";
 import { format } from "date-fns";
-import '../table.css'
+import "../table.css";
+import { Button } from "@mui/material";
 
 const table = createTable();
-console.log(table);
+
 const defaultData = [...Student];
 
 const defaultColumns = [
@@ -81,7 +82,29 @@ const defaultColumns = [
     header: "City State",
     footer: "City State",
   }),
+  table.createDataColumn("action", {
+    id: "action",
+    header: "Action",
+    footer: "Action",
+    cell: (props) => (
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            handleEdit(props.row.original);
+          }}
+        >
+          Edit
+        </Button>
+      </div>
+    ),
+  }),
 ];
+
+const handleEdit = (EditData) => {
+  alert(JSON.stringify(EditData));
+};
 
 export default function V8table() {
   const [data, setData] = useState([...defaultData]);

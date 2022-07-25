@@ -75,19 +75,7 @@ function App() {
   //       width: 100,
   //       disableSortBy: true,
   //       disableFilters: true,
-  //       Cell: (info) => {
-  //         return (
-  //           <Button
-  //             onClick={() => {
-  //               // console.log(info.row.original);
-  //               handleEdit(info.row.original);
-  //             }}
-  //           >
-  //             Edit
-  //           </Button>
-  //         );
-  //       },
-  //     },
+  //       
   //   ],
   //   []
   // );
