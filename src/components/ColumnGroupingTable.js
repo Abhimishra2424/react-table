@@ -5,9 +5,8 @@ import {
   useTableInstance,
 } from "@tanstack/react-table";
 import Student from "../STUDENT_MOCK.json";
+import download from "downloadjs";
 import { format } from "date-fns";
-// import "../table.css";
-
 
 const table = createTable();
 
@@ -79,13 +78,33 @@ const defaultColumns = [
       }),
     ],
   }),
+  table.createDisplayColumn({
+    id: "action",
+    cell: (props) => {
+      return (
+        <button
+          onClick={() => {
+            download(
+              props.row
+                .getAllCells()
+                .map((cell) => cell.getValue())
+                .join("\n"),
+              `${props.row.getValue("firstName")}`,
+              "text/plain"
+            );
+          }}
+        >
+          Download
+        </button>
+      );
+    },
+  }),
 ];
+
 
 const ColumnGroupingTable = () => {
   const [data, setData] = useState([...defaultData]);
   const [columns, setColumns] = useState([...defaultColumns]);
-
-  
 
   const tableInstance = useTableInstance(table, {
     data,
@@ -129,7 +148,6 @@ const ColumnGroupingTable = () => {
             </tr>
           ))}
         </tfoot>
-        
       </table>
     </div>
   );
