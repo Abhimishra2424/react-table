@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-table";
 import Student from "../student.json";
 import { format } from "date-fns";
+import '../table.css'
 
 const table = createTable();
 console.log(table);
