@@ -1896,17 +1896,17 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@tanstack/react-table@^8.3.3":
-  version "8.3.3"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.3.3.tgz#bcad6e4ec8e34c96ec50c9d7df14190042fc54ce"
-  integrity sha512-Zvp40XmxJgage/GKzqQVH38gVRtF5rmLV7WIWE4WZUtKsZgPhU3ZUt7ijc2Nyej8v/KGkF4ja8FA/UITevZA4A==
+"@tanstack/react-table@8.0.0-beta.4":
+  version "8.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.0.0-beta.4.tgz#3c2be1cb247ebbdde46484bd769994937ce28f83"
+  integrity sha512-0GM6V+eupU8/0ja+rQ0F9d7UCq4kA9D0UBSdZMjv1MJryTu2apDc8bOTyOkwmQiqNl2JMj3pBg7A9izXM6ozzA==
   dependencies:
-    "@tanstack/table-core" "8.3.3"
+    "@tanstack/table-core" "8.0.0-beta.4"
 
-"@tanstack/table-core@8.3.3":
-  version "8.3.3"
-  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.3.3.tgz#c01103ffd7cdc070f470c79b2c14401c7d7ca5ae"
-  integrity sha512-Y9lVatqOsQaQBmoKynWIkThC9MN+z4RCP8hSyGPlxI4K1MINFUBswpi3mEg157g0Q9UOXtmt13s7wnoHHfe+2Q==
+"@tanstack/table-core@8.0.0-beta.4":
+  version "8.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.0.0-beta.4.tgz#afcdae6131b60212221b6b6ee8e9dde1f7365a6b"
+  integrity sha512-BIQtkIaYFTkE4+ymhOMNe3kMiiPavhltK9Ik9nFni4wnIt1mRHaQFfBZ9dLwMqeaNW8bBLJ8Je2CNnUf7Dl8/Q==
 
 "@testing-library/dom@^8.5.0":
   version "8.16.0"
