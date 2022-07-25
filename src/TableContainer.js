@@ -5,6 +5,7 @@ import {
   useFilters,
   usePagination,
   useBlockLayout,
+  ReactTableDefaults,
 } from "react-table";
 import { Table, Button, Grid } from "semantic-ui-react";
 import { Filter, DefaultColumnFilter } from "./filters";
@@ -19,7 +20,7 @@ const TableContainer = ({ columns, data }) => {
     headerGroups,
     rows,
     prepareRow,
-    // page,
+    page,
     // below new props related to 'usePagination' hook
     canPreviousPage,
     canNextPage,
@@ -29,16 +30,15 @@ const TableContainer = ({ columns, data }) => {
     nextPage,
     previousPage,
     totalColumnsWidth,
-    // setPageSize,
+    setPageSize,
     footerGroups,
-
-    state: { pageIndex },
+    state: { pageIndex, pageSize },
   } = useTable(
     {
       columns,
       data,
       defaultColumn: { Filter: DefaultColumnFilter },
-      initialState: { pageIndex: 0, pageSize: 20 },
+      initialState: { pageIndex: 0, pageSize: 10 },
     },
     useFilters,
     useSortBy,
@@ -117,6 +117,21 @@ const TableContainer = ({ columns, data }) => {
           </FixedSizeList>
         </div>
 
+        {/* <tbody {...getTableBodyProps()}>
+          {page?.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => {
+                  return (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody> */}
+
         <tfoot>
           {footerGroups.map((group) => (
             <tr {...group.getFooterGroupProps()}>
@@ -128,7 +143,7 @@ const TableContainer = ({ columns, data }) => {
         </tfoot>
       </Table>
 
-      <Fragment>
+      {/* <Fragment>
         <Grid columns={6}>
           <Grid.Row>
             <Grid.Column>
@@ -171,7 +186,54 @@ const TableContainer = ({ columns, data }) => {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-      </Fragment>
+      </Fragment> */}
+
+      <div>
+        <Button
+          color="primary"
+          onClick={() => gotoPage(0)}
+          disabled={!canPreviousPage}
+        >
+          {"<<"}
+        </Button>
+        <Button
+          color="primary"
+          onClick={previousPage}
+          disabled={!canPreviousPage}
+        >
+          {"<"}
+        </Button>
+        <Button color="primary" onClick={nextPage} disabled={!canNextPage}>
+          {">"}
+        </Button>
+        <Button
+          color="primary"
+          onClick={() => gotoPage(pageCount - 1)}
+          disabled={!canNextPage}
+        >
+          {">>"}
+        </Button>
+        <span>
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>
+        </span>
+        <span>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+            }}
+          >
+            {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </span>
+      </div>
     </>
   );
 };
