@@ -12,7 +12,7 @@ import { format } from "date-fns";
 import { Table, Container } from "semantic-ui-react";
 
 import SettingsIcon from "@mui/icons-material/Settings";
-import { IconButton } from "@mui/material";
+import { Checkbox, IconButton } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 
 import PaginationV8 from "./PaginationV8";
@@ -23,8 +23,31 @@ const table = createTable();
 const defaultData = [...Student];
 
 const defaultColumns = [
+  table.createDataColumn("select", {
+    id: "select",
+    header: ({ instance }) => {
+      return (
+        <IndeterminateCheckbox
+          checked={instance.getIsAllRowsSelected()}
+          indeterminate={instance.getIsSomeRowsSelected()}
+          onChange={instance.getToggleAllRowsSelectedHandler()}
+        />
+      );
+    },
+    enableSorting: false,
+    cell: (props) => {
+      return (
+        <input
+          type="checkbox"
+          checked={props.row.getIsSelected()}
+          onChange={props.row.getToggleSelectedHandler()}
+        />
+      );
+    },
+  }),
   table.createDisplayColumn({
     id: "action",
+    header: "Action",
     cell: (props) => {
       return (
         <IconButton
@@ -51,12 +74,15 @@ const defaultColumns = [
     columns: [
       table.createDataColumn("firstName", {
         id: "firstName",
+        header: "First",
       }),
       table.createDataColumn("middleName", {
         id: "middleName",
+        header: "Middle",
       }),
       table.createDataColumn("lastName", {
         id: "lastName",
+        header: "Last",
       }),
     ],
   }),
@@ -100,13 +126,11 @@ const defaultColumns = [
       table.createDataColumn("date_of_birth", {
         id: "date_of_birth",
         header: "Date of Birth",
-        footer: "Date of Birth",
         cell: (row) => format(new Date(row.getValue()), "dd/MM/yyyy"),
       }),
       table.createDataColumn("date_of_admission", {
         id: "date_of_admission",
         header: "Date of Admission",
-        footer: "Date of Admission",
         cell: (row) => format(new Date(row.getValue()), "dd/MM/yyyy"),
       }),
     ],
@@ -120,6 +144,7 @@ const ColumnGroupingTable = () => {
   const [sorting, setSorting] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [open, setOpen] = useState(false);
+  const [rowSelection, setRowSelection] = useState([]);
 
   const tableInstance = useTableInstance(table, {
     data,
@@ -127,13 +152,21 @@ const ColumnGroupingTable = () => {
     state: {
       sorting,
       columnVisibility,
+      rowSelection,
     },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  // You got selected rows when you click on the checkbox
+  // console.log(
+  //   "tableInstance",
+  //   tableInstance.getSelectedRowModel().rows.map((row) => row.original)
+  // );
 
   const handleClose = (value) => {
     setOpen(false);
@@ -229,5 +262,18 @@ const ColumnGroupingTable = () => {
     </Container>
   );
 };
+
+function IndeterminateCheckbox({ checked, indeterminate, onChange }) {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (typeof indeterminate === "boolean") {
+      ref.current.indeterminate = indeterminate;
+    }
+  }, [ref, indeterminate]);
+
+  return (
+    <input type="checkbox" ref={ref} checked={checked} onChange={onChange} />
+  );
+}
 
 export default ColumnGroupingTable;
