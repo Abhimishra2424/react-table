@@ -9,8 +9,8 @@ import {
 import Student from "../STUDENT_MOCK.json";
 import download from "downloadjs";
 import { format } from "date-fns";
-import { Table, Grid } from "semantic-ui-react";
-import { Button } from "@mui/material";
+import { Table, Grid , Button } from "semantic-ui-react";
+// import { Button } from "@mui/material";
 
 const table = createTable();
 
@@ -125,7 +125,8 @@ const ColumnGroupingTable = () => {
 
   return (
     <div>
-      <Table className="ui called red">
+      <div className="table-c">
+      <Table className="ui">
         <thead>
           {tableInstance.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -183,6 +184,7 @@ const ColumnGroupingTable = () => {
         </tfoot> */}
       </Table>
 
+      </div>
       {/* create pagination */}
 
       <div
@@ -247,7 +249,7 @@ const ColumnGroupingTable = () => {
             tableInstance.setPageSize(Number(e.target.value));
           }}
         >
-          {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+          {[5, 10, 20, 30, 40, 50,100].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>

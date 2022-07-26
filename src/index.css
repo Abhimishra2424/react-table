@@ -26,3 +26,18 @@
   color: white;
 }
 
+.table-c {
+  max-height: 600px;
+  overflow-y: scroll;
+}
+
+thead,
+tfoot {
+  position: sticky;
+}
+thead {
+  top: 0;
+}
+tfoot {
+  bottom: 0;
+}
