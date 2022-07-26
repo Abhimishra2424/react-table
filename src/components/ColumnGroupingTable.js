@@ -4,6 +4,7 @@ import {
   getCoreRowModel,
   useTableInstance,
   getPaginationRowModel,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import Student from "../STUDENT_MOCK.json";
 import download from "downloadjs";
@@ -108,11 +109,18 @@ const ColumnGroupingTable = () => {
   const [data, setData] = useState([...defaultData]);
   const [columns, setColumns] = useState([...defaultColumns]);
 
+  const [sorting, setSorting] = useState([]);
+
   const tableInstance = useTableInstance(table, {
     data,
     columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -123,7 +131,19 @@ const ColumnGroupingTable = () => {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id} colSpan={header.colSpan}>
-                  {header.isPlaceholder ? null : header.renderHeader()}
+                  {header.isPlaceholder ? null : (
+                    <div onClick={header.column.getToggleSortingHandler()}>
+                      {header.renderHeader()}
+                      {header.column.getCanSort() ? (
+                        <>
+                          {{
+                            asc: <span>🔼 </span>,
+                            desc: <span>🔽</span>,
+                          }[header.column.getIsSorted()] ?? " ↕️"}
+                        </>
+                      ) : null}
+                    </div>
+                  )}
                 </th>
               ))}
             </tr>
@@ -174,28 +194,28 @@ const ColumnGroupingTable = () => {
         }}
       >
         <Button
-        variant="contained"
+          variant="contained"
           onClick={() => tableInstance.setPageIndex(0)}
           disabled={!tableInstance.getCanPreviousPage()}
         >
           {"<<"}
         </Button>
         <Button
-        variant="contained"
+          variant="contained"
           onClick={() => tableInstance.previousPage()}
           disabled={!tableInstance.getCanPreviousPage()}
         >
           {"<"}
         </Button>
         <Button
-        variant="contained"
+          variant="contained"
           onClick={() => tableInstance.nextPage()}
           disabled={!tableInstance.getCanNextPage()}
         >
           {">"}
         </Button>
         <Button
-        variant="contained"
+          variant="contained"
           onClick={() =>
             tableInstance.setPageIndex(tableInstance.getPageCount() - 1)
           }
