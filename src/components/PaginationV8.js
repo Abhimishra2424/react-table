@@ -9,6 +9,7 @@ export default function PaginationV8({ tableInstance }) {
         justifyContent: "center",
         alignItems: "center",
         marginTop: "20px",
+        
       }}
     >
       <Button

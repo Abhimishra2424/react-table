@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ColumnGroupingTable from "./components/ColumnGroupingTable";
+import { FilteringTable } from "./components/filteringTable";
 import V8table from "./components/V8-table";
 // import { Container } from "semantic-ui-react";
 // import { BasicTable } from "./components/BasicTable";
@@ -109,6 +110,7 @@ function App() {
     <>
       {/* <V8table /> */}
       <ColumnGroupingTable />
+      {/* <FilteringTable /> */}
     </>
   );
 }

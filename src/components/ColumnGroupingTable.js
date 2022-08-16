@@ -12,7 +12,7 @@ import { format } from "date-fns";
 import { Table, Container } from "semantic-ui-react";
 
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Checkbox, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 
 import PaginationV8 from "./PaginationV8";
