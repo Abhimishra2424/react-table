@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import {
   useTable,
   useSortBy,
@@ -50,8 +50,52 @@ const TableContainer = ({ columns, data }) => {
     return column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : "";
   };
 
+  const tbodyRef = useRef();
+  const outerListRef = useRef(undefined);
+  const innerListRef = useRef(undefined);
+  const [scrollOffset, setScrollOffset] = useState(0);
+  const listHeight = 150;
+
+  const [pageUp, pageDown, home, end] = [33, 34, 36, 35];
+  const pageOffset = listHeight * 5;
+  const maxHeight =
+    (innerListRef.current &&
+      innerListRef.current.style.height.replace("px", "")) ||
+    listHeight;
+
+  const minHeight = 0.1;
+  const keys = {
+    [pageUp]: Math.max(minHeight, scrollOffset - pageOffset),
+    [pageDown]: Math.min(scrollOffset + pageOffset, maxHeight),
+    [end]: maxHeight,
+    [home]: minHeight,
+  };
+
+  // const handleKeyDown = ({ keyCode }) => {
+  //   keys[keyCode] && setScrollOffset(keys[keyCode])
+  // }
+
+  const handleKeyDown = (event, ID) => {
+    //up and Down key
+    const active = document.activeElement;
+    active.addEventListener("keydown", function (event) {
+      switch (event.key) {
+        case "ArrowUp":
+          active?.previousElementSibling?.focus();
+          event.preventDefault();
+          break;
+        case "ArrowDown":
+          active?.nextElementSibling?.focus();
+          event.preventDefault();
+          break;
+        default:
+          break;
+      }
+    });
+  };
+
   const RenderRow = React.useCallback(
-    ({ index, style }) => {
+    ({ index, style, isScrolling }) => {
       const row = rows[index];
       prepareRow(row);
       return (
@@ -63,10 +107,33 @@ const TableContainer = ({ columns, data }) => {
               width: totalColumnsWidth,
             },
           })}
+          key={row.idx}
+          ref={tbodyRef}
+          tabIndex={1}
+          className="border_bottom"
+          onKeyDown={(e) => handleKeyDown(e, row.idx)}
         >
-          {row.cells.map((cell) => {
+          {isScrolling
+            ? "loading........."
+            : row.cells.map((cell) => {
+                return (
+                  <div
+                
+                    {...cell.getCellProps({
+                      style: {
+                        ...cell.style,
+                        minHeight: "initial",
+                        width: cell.column.width,
+                      },
+                    })}
+                  >
+                    {cell.render("Cell")}
+                  </div>
+                );
+              })}
+          {/* {row.cells.map((cell) => {
             return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
-          })}
+          })} */}
         </tr>
       );
     },
@@ -105,9 +172,13 @@ const TableContainer = ({ columns, data }) => {
           ))}
         </thead>
 
-        <div {...getTableBodyProps()}>
+        <div {...getTableBodyProps()} ref={tbodyRef}>
           <FixedSizeList
             height={450}
+            className="List"
+            // outerRef={outerListRef}
+            // innerRef={innerListRef}
+            // useIsScrolling
             itemCount={rows.length}
             scrollToItem={pageIndex}
             itemSize={50}
@@ -117,11 +188,13 @@ const TableContainer = ({ columns, data }) => {
           </FixedSizeList>
         </div>
 
-        {/* <tbody {...getTableBodyProps()}>
-          {page?.map((row) => {
+        {/* <tbody {...getTableBodyProps()} ref={tbodyRef}>
+          {rows?.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr {...row.getRowProps()} key={row.idx} ref={tbodyRef} tabIndex={1} 
+              className="border_bottom" 
+              onKeyDown={(e) => handleKeyDown(e, row.idx)}>
                 {row.cells.map((cell) => {
                   return (
                     <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
@@ -188,7 +261,7 @@ const TableContainer = ({ columns, data }) => {
         </Grid>
       </Fragment> */}
 
-      <div>
+      {/* <div>
         <Button
           color="primary"
           onClick={() => gotoPage(0)}
@@ -233,7 +306,7 @@ const TableContainer = ({ columns, data }) => {
             ))}
           </select>
         </span>
-      </div>
+      </div> */}
     </>
   );
 };
